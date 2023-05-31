@@ -8,9 +8,7 @@ import (
 )
 
 func addVersionRoutes(rg *gin.RouterGroup) {
-	version := rg.Group("/version")
-
-	version.GET("/", func(c *gin.Context) {
+	rg.GET("/version", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"name":    constant.AppName,
 			"version": constant.AppVersion,

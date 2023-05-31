@@ -17,7 +17,7 @@ func Run() {
 // so this one won't be so messy
 func getRoutes() {
 	v1 := router.Group("/v1")
-	addHealthCheckRoutes(v1)
+	addHealthzRoutes(v1)
 	addVersionRoutes(v1)
 	addWebhookRoutes(v1)
 }
