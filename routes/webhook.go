@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/rizkiamr/go-bookshelf-api/constant"
 )
 
 var (
@@ -32,7 +33,17 @@ var (
 func addWebhookRoutes(rg *gin.RouterGroup) {
 	webhooks := rg.Group("/webhooks")
 
-	webhooks.GET("/hello-world", helloWorldWebhookFunc)
+	// use basic auth to invoke the hello-world webhook
+	// auth: base64("app-id:app-secret")
+	// curl -H "authorization: Basic YXBwLWlkOmFwcC1zZWNyZXQ=" \
+	//   localhost:8080/v1/webhooks/hello-world
+	webhooks.GET(
+		"/hello-world",
+		gin.BasicAuth(gin.Accounts{
+			constant.AppBasicAuthId: constant.AppBasicAuthSecret,
+		}),
+		helloWorldWebhookFunc,
+	)
 }
 
 func helloWorldWebhookFunc(c *gin.Context) {
