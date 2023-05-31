@@ -16,8 +16,10 @@ func Run() {
 // this way every group of routes can be defined in their own file
 // so this one won't be so messy
 func getRoutes() {
+	addHealthzRoutes()
+	addVersionRoutes()
+	addMetricsRoutes()
+
 	v1 := router.Group("/v1")
-	addHealthzRoutes(v1)
-	addVersionRoutes(v1)
 	addWebhookRoutes(v1)
 }
