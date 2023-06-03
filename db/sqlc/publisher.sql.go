@@ -7,26 +7,19 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createPublisher = `-- name: CreatePublisher :one
 INSERT INTO publishers (
-    name,
-    "insertedAt"
+    name
 ) VALUES (
-    $1, $2
+    $1
 )
 RETURNING id, name, "insertedAt"
 `
 
-type CreatePublisherParams struct {
-	Name       sql.NullString `json:"name"`
-	InsertedAt sql.NullTime   `json:"insertedAt"`
-}
-
-func (q *Queries) CreatePublisher(ctx context.Context, arg CreatePublisherParams) (Publisher, error) {
-	row := q.db.QueryRowContext(ctx, createPublisher, arg.Name, arg.InsertedAt)
+func (q *Queries) CreatePublisher(ctx context.Context, name string) (Publisher, error) {
+	row := q.db.QueryRowContext(ctx, createPublisher, name)
 	var i Publisher
 	err := row.Scan(&i.ID, &i.Name, &i.InsertedAt)
 	return i, err
@@ -97,8 +90,8 @@ RETURNING id, name, "insertedAt"
 `
 
 type UpdatePublisherParams struct {
-	ID   int64          `json:"id"`
-	Name sql.NullString `json:"name"`
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
 }
 
 func (q *Queries) UpdatePublisher(ctx context.Context, arg UpdatePublisherParams) (Publisher, error) {

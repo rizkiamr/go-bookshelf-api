@@ -1,27 +1,27 @@
 CREATE TABLE "authors" (
-  "id" bigInt PRIMARY KEY,
-  "name" varchar,
-  "insertedAt" timestamptz
+  "id" bigserial PRIMARY KEY,
+  "name" varchar NOT NULL,
+  "insertedAt" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "publishers" (
   "id" bigInt PRIMARY KEY,
-  "name" varchar,
-  "insertedAt" timestamptz
+  "name" varchar NOT NULL,
+  "insertedAt" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "books" (
   "id" bigInt PRIMARY KEY,
-  "name" varchar,
-  "year" integer,
-  "author_id" bigInt,
-  "summary" text,
-  "publisher_id" bigInt,
-  "pageCount" integer,
-  "readPage" integer,
-  "finished" bool,
-  "reading" bool,
-  "insertedAt" timestamptz,
+  "name" varchar NOT NULL,
+  "year" integer NOT NULL,
+  "author_id" bigInt NOT NULL,
+  "summary" text NOT NULL,
+  "publisher_id" bigInt NOT NULL,
+  "pageCount" integer NOT NULL,
+  "readPage" integer NOT NULL,
+  "finished" bool NOT NULL,
+  "reading" bool NOT NULL,
+  "insertedAt" timestamptz NOT NULL DEFAULT (now()),
   "updatedAt" timestamptz
 );
 

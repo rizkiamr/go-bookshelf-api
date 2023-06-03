@@ -6,31 +6,32 @@ package db
 
 import (
 	"database/sql"
+	"time"
 )
 
 type Author struct {
-	ID         int64          `json:"id"`
-	Name       sql.NullString `json:"name"`
-	InsertedAt sql.NullTime   `json:"insertedAt"`
+	ID         int64     `json:"id"`
+	Name       string    `json:"name"`
+	InsertedAt time.Time `json:"insertedAt"`
 }
 
 type Book struct {
-	ID          int64          `json:"id"`
-	Name        sql.NullString `json:"name"`
-	Year        sql.NullInt32  `json:"year"`
-	AuthorID    sql.NullInt64  `json:"author_id"`
-	Summary     sql.NullString `json:"summary"`
-	PublisherID sql.NullInt64  `json:"publisher_id"`
-	PageCount   sql.NullInt32  `json:"pageCount"`
-	ReadPage    sql.NullInt32  `json:"readPage"`
-	Finished    sql.NullBool   `json:"finished"`
-	Reading     sql.NullBool   `json:"reading"`
-	InsertedAt  sql.NullTime   `json:"insertedAt"`
-	UpdatedAt   sql.NullTime   `json:"updatedAt"`
+	ID          int64        `json:"id"`
+	Name        string       `json:"name"`
+	Year        int32        `json:"year"`
+	AuthorID    int64        `json:"author_id"`
+	Summary     string       `json:"summary"`
+	PublisherID int64        `json:"publisher_id"`
+	PageCount   int32        `json:"pageCount"`
+	ReadPage    int32        `json:"readPage"`
+	Finished    bool         `json:"finished"`
+	Reading     bool         `json:"reading"`
+	InsertedAt  time.Time    `json:"insertedAt"`
+	UpdatedAt   sql.NullTime `json:"updatedAt"`
 }
 
 type Publisher struct {
-	ID         int64          `json:"id"`
-	Name       sql.NullString `json:"name"`
-	InsertedAt sql.NullTime   `json:"insertedAt"`
+	ID         int64     `json:"id"`
+	Name       string    `json:"name"`
+	InsertedAt time.Time `json:"insertedAt"`
 }

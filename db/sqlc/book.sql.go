@@ -21,26 +21,24 @@ INSERT INTO books (
     "readPage",
     finished,
     reading,
-    "insertedAt",
     "updatedAt"
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
 )
 RETURNING id, name, year, author_id, summary, publisher_id, "pageCount", "readPage", finished, reading, "insertedAt", "updatedAt"
 `
 
 type CreateBookParams struct {
-	Name        sql.NullString `json:"name"`
-	Year        sql.NullInt32  `json:"year"`
-	AuthorID    sql.NullInt64  `json:"author_id"`
-	Summary     sql.NullString `json:"summary"`
-	PublisherID sql.NullInt64  `json:"publisher_id"`
-	PageCount   sql.NullInt32  `json:"pageCount"`
-	ReadPage    sql.NullInt32  `json:"readPage"`
-	Finished    sql.NullBool   `json:"finished"`
-	Reading     sql.NullBool   `json:"reading"`
-	InsertedAt  sql.NullTime   `json:"insertedAt"`
-	UpdatedAt   sql.NullTime   `json:"updatedAt"`
+	Name        string       `json:"name"`
+	Year        int32        `json:"year"`
+	AuthorID    int64        `json:"author_id"`
+	Summary     string       `json:"summary"`
+	PublisherID int64        `json:"publisher_id"`
+	PageCount   int32        `json:"pageCount"`
+	ReadPage    int32        `json:"readPage"`
+	Finished    bool         `json:"finished"`
+	Reading     bool         `json:"reading"`
+	UpdatedAt   sql.NullTime `json:"updatedAt"`
 }
 
 func (q *Queries) CreateBook(ctx context.Context, arg CreateBookParams) (Book, error) {
@@ -54,7 +52,6 @@ func (q *Queries) CreateBook(ctx context.Context, arg CreateBookParams) (Book, e
 		arg.ReadPage,
 		arg.Finished,
 		arg.Reading,
-		arg.InsertedAt,
 		arg.UpdatedAt,
 	)
 	var i Book
@@ -166,8 +163,8 @@ RETURNING id, name, year, author_id, summary, publisher_id, "pageCount", "readPa
 `
 
 type UpdateBookParams struct {
-	ID   int64          `json:"id"`
-	Name sql.NullString `json:"name"`
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
 }
 
 func (q *Queries) UpdateBook(ctx context.Context, arg UpdateBookParams) (Book, error) {

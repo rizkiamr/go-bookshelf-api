@@ -7,26 +7,19 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createAuthor = `-- name: CreateAuthor :one
 INSERT INTO authors (
-    name,
-    "insertedAt"
+    name
 ) VALUES (
-    $1, $2
+    $1
 )
 RETURNING id, name, "insertedAt"
 `
 
-type CreateAuthorParams struct {
-	Name       sql.NullString `json:"name"`
-	InsertedAt sql.NullTime   `json:"insertedAt"`
-}
-
-func (q *Queries) CreateAuthor(ctx context.Context, arg CreateAuthorParams) (Author, error) {
-	row := q.db.QueryRowContext(ctx, createAuthor, arg.Name, arg.InsertedAt)
+func (q *Queries) CreateAuthor(ctx context.Context, name string) (Author, error) {
+	row := q.db.QueryRowContext(ctx, createAuthor, name)
 	var i Author
 	err := row.Scan(&i.ID, &i.Name, &i.InsertedAt)
 	return i, err
@@ -97,8 +90,8 @@ RETURNING id, name, "insertedAt"
 `
 
 type UpdateAuthorParams struct {
-	ID   int64          `json:"id"`
-	Name sql.NullString `json:"name"`
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
 }
 
 func (q *Queries) UpdateAuthor(ctx context.Context, arg UpdateAuthorParams) (Author, error) {
