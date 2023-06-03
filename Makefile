@@ -19,4 +19,7 @@ migrate-up:
 migrate-down:
 	migrate -path db/migration -database "postgresql://postgres:postgres@127.0.0.1:5432/bookshelf?sslmode=disable" -verbose down
 
-.PHONY: stop-postgres-podman delete-postgres-podman start-postgres-podman create-db-podman drop-db-podman migrate-up migrate-down
+sqlc:
+	sqlc generate
+
+.PHONY: stop-postgres-podman delete-postgres-podman start-postgres-podman create-db-podman drop-db-podman migrate-up migrate-down sqlc
