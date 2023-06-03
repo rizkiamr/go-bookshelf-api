@@ -5,13 +5,13 @@ CREATE TABLE "authors" (
 );
 
 CREATE TABLE "publishers" (
-  "id" bigInt PRIMARY KEY,
+  "id" bigserial PRIMARY KEY,
   "name" varchar NOT NULL,
   "insertedAt" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "books" (
-  "id" bigInt PRIMARY KEY,
+  "id" bigserial PRIMARY KEY,
   "name" varchar NOT NULL,
   "year" integer NOT NULL,
   "author_id" bigInt NOT NULL,
