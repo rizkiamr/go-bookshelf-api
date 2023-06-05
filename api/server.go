@@ -26,8 +26,18 @@ func NewServer(store *db.Store) *Server {
 	v1.POST("/authors", server.createAuthor)
 	v1.GET("/authors/:id", server.getAuthor)
 	v1.GET("/authors", server.listAuthors)
-	v1.DELETE("/author/:id", server.deleteAuthor)
-	v1.PATCH("/author/:id", server.updateAuthor)
+	v1.DELETE("/authors/:id", server.deleteAuthor)
+	v1.PUT("/authors/:id", server.updateAuthor)
+
+	v1.POST("/publishers", server.createPublisher)
+	v1.GET("/publishers/:id", server.getPublisher)
+	v1.GET("/publishers", server.listPublishers)
+	v1.DELETE("/publishers/:id", server.deletePublisher)
+	v1.PUT("/publishers/:id", server.updatePublisher)
+
+	v1.POST("/books", server.createBook)
+	v1.GET("/books", server.listBooks)
+	v1.GET("/books/:id", server.getBook)
 
 	addWebhookRoutes(v1)
 
