@@ -23,13 +23,13 @@ func (server *Server) createAuthor(ctx *gin.Context) {
 
 	name := req.Name
 
-	account, err := server.store.CreateAuthor(context.Background(), name)
+	author, err := server.store.CreateAuthor(context.Background(), name)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, account)
+	ctx.JSON(http.StatusOK, author)
 }
 
 type getAuthorRequest struct {
@@ -43,7 +43,7 @@ func (server *Server) getAuthor(ctx *gin.Context) {
 		return
 	}
 
-	account, err := server.store.GetAuthor(context.Background(), req.ID)
+	author, err := server.store.GetAuthor(context.Background(), req.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -54,7 +54,7 @@ func (server *Server) getAuthor(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, account)
+	ctx.JSON(http.StatusOK, author)
 }
 
 type listAuthorRequest struct {
@@ -74,13 +74,13 @@ func (server *Server) listAuthors(ctx *gin.Context) {
 		Offset: (req.PageID - 1) * req.PageSize,
 	}
 
-	account, err := server.store.ListAuthors(context.Background(), arg)
+	author, err := server.store.ListAuthors(context.Background(), arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, account)
+	ctx.JSON(http.StatusOK, author)
 }
 
 type deleteAuthorRequest struct {
@@ -105,7 +105,7 @@ func (server *Server) deleteAuthor(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, okResponse())
+	ctx.JSON(http.StatusOK, deleteOkResponse(req.ID))
 }
 
 type updateAuthorRequest struct {
@@ -127,7 +127,7 @@ func (server *Server) updateAuthor(ctx *gin.Context) {
 		Name: req.Name,
 	}
 
-	account, err := server.store.UpdateAuthor(context.Background(), arg)
+	author, err := server.store.UpdateAuthor(context.Background(), arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -138,5 +138,5 @@ func (server *Server) updateAuthor(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, account)
+	ctx.JSON(http.StatusAccepted, author)
 }
