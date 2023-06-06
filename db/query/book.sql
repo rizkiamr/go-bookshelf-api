@@ -27,7 +27,17 @@ OFFSET $2;
 
 -- name: UpdateBook :one
 UPDATE books
-SET name = $2
+SET
+    name = $2,
+    year = $3,
+    author_id = $4,
+    summary = $5,
+    publisher_id = $6,
+    "pageCount" = $7,
+    "readPage" = $8,
+    finished = $9,
+    reading = $10,
+    "updatedAt" = $11
 WHERE id = $1
 RETURNING *;
 

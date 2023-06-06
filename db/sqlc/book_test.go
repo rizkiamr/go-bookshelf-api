@@ -76,10 +76,21 @@ func TestGetBook(t *testing.T) {
 
 func TestUpdateBook(t *testing.T) {
 	book1 := createRandomBook(t)
+	author1 := createRandomAuthor(t)
+	publisher1 := createRandomPublisher(t)
 
 	arg := UpdateBookParams{
 		ID:   book1.ID,
 		Name: util.RandomName(),
+		Year: util.RandomInt32(1, 3000),
+		AuthorID: author1.ID,
+		Summary: util.RandomString(15),
+		PublisherID: publisher1.ID,
+		PageCount: util.RandomInt32(1, 5000),
+		ReadPage: util.RandomInt32(1, 100),
+		Finished: util.RandomBool(),
+		Reading: util.RandomBool(),
+		UpdatedAt: book1.UpdatedAt,
 	}
 
 	book2, err := testQueries.UpdateBook(context.Background(), arg)
@@ -88,14 +99,14 @@ func TestUpdateBook(t *testing.T) {
 
 	require.Equal(t, book1.ID, book2.ID)
 	require.Equal(t, arg.Name, book2.Name)
-	require.Equal(t, book1.Year, book2.Year)
-	require.Equal(t, book1.AuthorID, book2.AuthorID)
-	require.Equal(t, book1.Summary, book2.Summary)
-	require.Equal(t, book1.PublisherID, book2.PublisherID)
-	require.Equal(t, book1.PageCount, book2.PageCount)
-	require.Equal(t, book1.ReadPage, book2.ReadPage)
-	require.Equal(t, book1.Finished, book2.Finished)
-	require.Equal(t, book1.Reading, book2.Reading)
+	require.Equal(t, arg.Year, book2.Year)
+	require.Equal(t, arg.AuthorID, book2.AuthorID)
+	require.Equal(t, arg.Summary, book2.Summary)
+	require.Equal(t, arg.PublisherID, book2.PublisherID)
+	require.Equal(t, arg.PageCount, book2.PageCount)
+	require.Equal(t, arg.ReadPage, book2.ReadPage)
+	require.Equal(t, arg.Finished, book2.Finished)
+	require.Equal(t, arg.Reading, book2.Reading)
 	require.Equal(t, book1.UpdatedAt, book2.UpdatedAt)
 
 	require.WithinDuration(t, book1.InsertedAt, book2.InsertedAt, time.Second)

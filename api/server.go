@@ -38,6 +38,8 @@ func NewServer(store *db.Store) *Server {
 	v1.POST("/books", server.createBook)
 	v1.GET("/books", server.listBooks)
 	v1.GET("/books/:id", server.getBook)
+	v1.PUT("/books/:id", server.updateBook)
+	v1.DELETE("/books/:id", server.deleteBook)
 
 	addWebhookRoutes(v1)
 
