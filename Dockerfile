@@ -23,7 +23,7 @@ ENV GIN_MODE=release
 # Do the build
 RUN go build -o server main.go
 
-FROM alpine
+FROM gcr.io/distroless/static
 
 USER nobody:nobody
 COPY --from=build /opt/build/server /opt/server
