@@ -27,10 +27,10 @@ func NewServer(store *db.Store) *Server {
 	server := &Server{store: store}
 	router := gin.Default()
 
-	// This makes it so each ip can only make 60 request per minute
+	// This makes it so each ip can only make 12 request per minute
 	rateLimitStore := ratelimit.InMemoryStore(&ratelimit.InMemoryOptions{
 		Rate:  time.Minute,
-		Limit: 60,
+		Limit: 12,
 	})
 
 	rateLimitMiddleware := ratelimit.RateLimiter(rateLimitStore, &ratelimit.Options{
