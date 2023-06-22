@@ -1,8 +1,11 @@
 package api
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	db "github.com/rizkiamr/go-bookshelf-api/db/sqlc"
+	ratelimit "github.com/rizkiamr/go-bookshelf-api/ratelimit"
 )
 
 // Server serves HTTP requests for our bookshelf service.
@@ -11,10 +14,31 @@ type Server struct {
 	router *gin.Engine
 }
 
+func keyFunc(ctx *gin.Context) string {
+	return ctx.ClientIP()
+}
+
+func errorHandler(ctx *gin.Context, info ratelimit.Info) {
+	ctx.String(429, "Mau nge-DDoS deck? Too many requests. Try again in "+time.Until(info.ResetTime).String())
+}
+
 // NewServer creates a new HTTP server and setup routing.
 func NewServer(store *db.Store) *Server {
 	server := &Server{store: store}
 	router := gin.Default()
+
+	// This makes it so each ip can only make 60 request per minute
+	rateLimitStore := ratelimit.InMemoryStore(&ratelimit.InMemoryOptions{
+		Rate:  time.Minute,
+		Limit: 60,
+	})
+
+	rateLimitMiddleware := ratelimit.RateLimiter(rateLimitStore, &ratelimit.Options{
+		ErrorHandler: errorHandler,
+		KeyFunc:      keyFunc,
+	})
+
+	router.Use(rateLimitMiddleware)
 
 	router.GET("/healthz", server.healthzRoutes)
 	router.GET("/version", server.versionRoutes)
