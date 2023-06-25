@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	constants "github.com/rizkiamr/go-bookshelf-api/constant"
 	db "github.com/rizkiamr/go-bookshelf-api/db/sqlc"
 	ratelimit "github.com/rizkiamr/go-bookshelf-api/ratelimit"
 )
@@ -30,7 +31,7 @@ func NewServer(store *db.Store) *Server {
 	// This makes it so each ip can only make 12 request per minute
 	rateLimitStore := ratelimit.InMemoryStore(&ratelimit.InMemoryOptions{
 		Rate:  time.Minute,
-		Limit: 12,
+		Limit: constants.RateLimitQuota,
 	})
 
 	rateLimitMiddleware := ratelimit.RateLimiter(rateLimitStore, &ratelimit.Options{
@@ -40,13 +41,14 @@ func NewServer(store *db.Store) *Server {
 
 	router.Use(rateLimitMiddleware)
 
-	router.GET("/healthz", server.healthzRoutes)
-	router.GET("/version", server.versionRoutes)
+	basePath := router.Group("/" + constants.BasePath)
+	basePath.GET("/healthz", server.healthzRoutes)
+	basePath.GET("/version", server.versionRoutes)
 
-	internal := router.Group("/internal")
+	internal := basePath.Group("/internal")
 	internal.GET("/metrics", server.addPrometheusHandler())
 
-	v1 := router.Group("/v1")
+	v1 := basePath.Group("/v1")
 	v1.POST("/authors", server.createAuthor)
 	v1.GET("/authors/:id", server.getAuthor)
 	v1.GET("/authors", server.listAuthors)
