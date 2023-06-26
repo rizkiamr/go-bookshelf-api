@@ -55,8 +55,6 @@ func NewServer(store *db.Store) *Server {
 	basePath := router.Group("/" + config.ServiceBasePath)
 	basePath.GET("/healthz", server.healthzRoutes)
 	basePath.GET("/version", server.versionRoutes)
-	// todo
-	// basePath.GET("/apidocs/*", server.apiDocsRoutes)
 
 	internal := basePath.Group("/internal")
 	internal.GET("/metrics", server.addPrometheusHandler())
