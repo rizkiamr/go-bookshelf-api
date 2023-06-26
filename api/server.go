@@ -29,7 +29,7 @@ func NewServer(store *db.Store) *Server {
 	server := &Server{store: store}
 	router := gin.Default()
 
-	config, err := util.LoadConfig("../.")
+	config, err := util.LoadConfig("../..")
 	if err != nil {
 		panic(err)
 	}

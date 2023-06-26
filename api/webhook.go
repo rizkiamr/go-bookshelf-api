@@ -31,7 +31,7 @@ var (
 )
 
 func addWebhookRoutes(rg *gin.RouterGroup) {
-	config, err := util.LoadConfig("../.")
+	config, err := util.LoadConfig("../..")
 	if err != nil {
 		panic(err)
 	}

@@ -8,7 +8,7 @@ import (
 )
 
 func (server *Server) healthzRoutes(ctx *gin.Context) {
-	config, err := util.LoadConfig("../.")
+	config, err := util.LoadConfig("../..")
 	if err != nil {
 		panic(err)
 	}
