@@ -18,11 +18,12 @@ RUN apk update && apk add --no-cache ca-certificates tzdata && update-ca-certifi
 
 FROM gcr.io/distroless/static
 USER nobody:nobody
-WORKDIR /
+RUN mkdir /opt -p
+WORKDIR /opt
 COPY --from=alpine /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=alpine /etc/passwd /etc/passwd
-COPY --from=build /opt/build/server .
+COPY --from=build /opt/build/server /opt/server
 ENV GIN_MODE=release
 
-ENTRYPOINT []
+CMD [ "/opt/server" ]

@@ -4,7 +4,6 @@ services:
   api:
     build:
       context: .
-    command: [ "./server" ]
     environment:
     - SERVICE_NAME=go-bookshelf-api
     - SERVICE_VERSION=0.0.1
