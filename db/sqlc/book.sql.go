@@ -33,7 +33,7 @@ type CreateBookParams struct {
 	Year        int32        `json:"year"`
 	AuthorID    string       `json:"author_id"`
 	Summary     string       `json:"summary"`
-	PublisherID int64        `json:"publisher_id"`
+	PublisherID string       `json:"publisher_id"`
 	PageCount   int32        `json:"pageCount"`
 	ReadPage    int32        `json:"readPage"`
 	Finished    bool         `json:"finished"`
@@ -178,7 +178,7 @@ type UpdateBookParams struct {
 	Year        int32        `json:"year"`
 	AuthorID    string       `json:"author_id"`
 	Summary     string       `json:"summary"`
-	PublisherID int64        `json:"publisher_id"`
+	PublisherID string       `json:"publisher_id"`
 	PageCount   int32        `json:"pageCount"`
 	ReadPage    int32        `json:"readPage"`
 	Finished    bool         `json:"finished"`

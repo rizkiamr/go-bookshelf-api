@@ -3,23 +3,33 @@ package db
 import (
 	"context"
 	"database/sql"
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/rizkiamr/go-bookshelf-api/util"
 	"github.com/stretchr/testify/require"
 )
 
 func createRandomPublisher(t *testing.T) Publisher {
-	name := util.RandomName()
 
-	publisher, err := testQueries.CreatePublisher(context.Background(), name)
+	uuidObj := uuid.New()
+	uuidStr := uuidObj.String()
+	uuidWithoutDashes := strings.ReplaceAll(uuidStr, "-", "")
+
+	arg := CreatePublisherParams{
+		ID:   uuidWithoutDashes,
+		Name: util.RandomName(),
+	}
+
+	publisher, err := testQueries.CreatePublisher(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, publisher)
 
-	require.Equal(t, name, publisher.Name)
+	require.Equal(t, arg.ID, publisher.ID)
+	require.Equal(t, arg.Name, publisher.Name)
 
-	require.NotZero(t, publisher.ID)
 	require.NotZero(t, publisher.InsertedAt)
 
 	return publisher
@@ -38,7 +48,7 @@ func TestGetPublisher(t *testing.T) {
 
 	require.Equal(t, publisher1.ID, publisher2.ID)
 	require.Equal(t, publisher1.Name, publisher2.Name)
-	
+
 	require.WithinDuration(t, publisher1.InsertedAt, publisher2.InsertedAt, time.Second)
 }
 
@@ -46,7 +56,7 @@ func TestUpdatePublisher(t *testing.T) {
 	publisher1 := createRandomPublisher(t)
 
 	arg := UpdatePublisherParams{
-		ID: publisher1.ID,
+		ID:   publisher1.ID,
 		Name: util.RandomName(),
 	}
 
@@ -77,7 +87,7 @@ func TestListPublishers(t *testing.T) {
 	}
 
 	arg := ListPublishersParams{
-		Limit: 5,
+		Limit:  5,
 		Offset: 5,
 	}
 

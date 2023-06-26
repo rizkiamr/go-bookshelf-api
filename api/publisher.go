@@ -4,9 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"net/http"
-	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	db "github.com/rizkiamr/go-bookshelf-api/db/sqlc"
 )
 
@@ -24,9 +25,16 @@ func (server *Server) createPublisher(ctx *gin.Context) {
 		return
 	}
 
-	name := req.Name
+	uuidObj := uuid.New()
+	uuidStr := uuidObj.String()
+	uuidWithoutDashes := strings.ReplaceAll(uuidStr, "-", "")
 
-	publisher, err := server.store.CreatePublisher(context.Background(), name)
+	arg := db.CreatePublisherParams{
+		ID:   uuidWithoutDashes,
+		Name: req.Name,
+	}
+
+	publisher, err := server.store.CreatePublisher(context.Background(), arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -35,7 +43,7 @@ func (server *Server) createPublisher(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{
 		"status":  "success",
 		"message": "Publisher berhasil ditambahkan",
-		"data": map[string]int64{
+		"data": map[string]string{
 			"publisherId": publisher.ID,
 		},
 	})
@@ -73,7 +81,7 @@ func (server *Server) listPublishers(ctx *gin.Context) {
 }
 
 type getPublisherRequest struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
+	ID string `uri:"id" binding:"required,min=1"`
 }
 
 func (server *Server) getPublisher(ctx *gin.Context) {
@@ -112,7 +120,7 @@ type updatePublisherRequest struct {
 func (server *Server) updatePublisher(ctx *gin.Context) {
 	var req updatePublisherRequest
 
-	id, _ := strconv.ParseInt(ctx.Params.ByName("id"), 0, 64)
+	id := ctx.Params.ByName("id")
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -148,7 +156,7 @@ func (server *Server) updatePublisher(ctx *gin.Context) {
 }
 
 type deletePublisherRequest struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
+	ID string `uri:"id" binding:"required,min=1"`
 }
 
 func (server *Server) deletePublisher(ctx *gin.Context) {

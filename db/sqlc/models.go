@@ -21,7 +21,7 @@ type Book struct {
 	Year        int32        `json:"year"`
 	AuthorID    string       `json:"author_id"`
 	Summary     string       `json:"summary"`
-	PublisherID int64        `json:"publisher_id"`
+	PublisherID string       `json:"publisher_id"`
 	PageCount   int32        `json:"pageCount"`
 	ReadPage    int32        `json:"readPage"`
 	Finished    bool         `json:"finished"`
@@ -31,7 +31,7 @@ type Book struct {
 }
 
 type Publisher struct {
-	ID         int64     `json:"id"`
+	ID         string    `json:"id"`
 	Name       string    `json:"name"`
 	InsertedAt time.Time `json:"insertedAt"`
 }
