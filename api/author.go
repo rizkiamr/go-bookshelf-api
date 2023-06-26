@@ -149,7 +149,7 @@ func (server *Server) updateAuthor(ctx *gin.Context) {
 		Name: req.Name,
 	}
 
-	author, err := server.store.UpdateAuthor(context.Background(), arg)
+	_, err := server.store.UpdateAuthor(context.Background(), arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -160,5 +160,8 @@ func (server *Server) updateAuthor(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, author)
+	ctx.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Author berhasil diperbarui",
+	})
 }
