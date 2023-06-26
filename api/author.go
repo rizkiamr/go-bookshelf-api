@@ -41,6 +41,37 @@ func (server *Server) createAuthor(ctx *gin.Context) {
 	})
 }
 
+type listAuthorRequest struct {
+	PageID   int32 `form:"page_id" binding:"required,min=1"`
+	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
+}
+
+func (server *Server) listAuthors(ctx *gin.Context) {
+	var req listAuthorRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	arg := db.ListAuthorsParams{
+		Limit:  req.PageSize,
+		Offset: (req.PageID - 1) * req.PageSize,
+	}
+
+	authors, err := server.store.ListAuthors(context.Background(), arg)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"status": "success",
+		"data": map[string][]db.Author{
+			"authors": authors,
+		},
+	})
+}
+
 type getAuthorRequest struct {
 	ID int64 `uri:"id" binding:"required,min=1"`
 }
@@ -74,62 +105,6 @@ func (server *Server) getAuthor(ctx *gin.Context) {
 	})
 }
 
-type listAuthorRequest struct {
-	PageID   int32 `form:"page_id" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
-}
-
-func (server *Server) listAuthors(ctx *gin.Context) {
-	var req listAuthorRequest
-	if err := ctx.ShouldBindQuery(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		return
-	}
-
-	arg := db.ListAuthorsParams{
-		Limit:  req.PageSize,
-		Offset: (req.PageID - 1) * req.PageSize,
-	}
-
-	authors, err := server.store.ListAuthors(context.Background(), arg)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{
-		"status": "success",
-		"data": map[string][]db.Author{
-			"authors": authors,
-		},
-	})
-}
-
-type deleteAuthorRequest struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
-}
-
-func (server *Server) deleteAuthor(ctx *gin.Context) {
-	var req deleteAuthorRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		return
-	}
-
-	err := server.store.DeleteAuthor(context.Background(), req.ID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
-			return
-		}
-
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	ctx.JSON(http.StatusOK, deleteOkResponse(req.ID))
-}
-
 type updateAuthorRequest struct {
 	Name string `json:"name" binding:"required"`
 }
@@ -140,7 +115,10 @@ func (server *Server) updateAuthor(ctx *gin.Context) {
 	id, _ := strconv.ParseInt(ctx.Params.ByName("id"), 0, 64)
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":  "fail",
+			"message": "Gagal memperbarui author. Mohon isi nama author",
+		})
 		return
 	}
 
@@ -152,7 +130,10 @@ func (server *Server) updateAuthor(ctx *gin.Context) {
 	_, err := server.store.UpdateAuthor(context.Background(), arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"status":  "fail",
+				"message": "Gagal memperbarui author. Id tidak ditemukan",
+			})
 			return
 		}
 
@@ -163,5 +144,39 @@ func (server *Server) updateAuthor(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"status":  "success",
 		"message": "Author berhasil diperbarui",
+	})
+}
+
+type deleteAuthorRequest struct {
+	ID int64 `uri:"id" binding:"required,min=1"`
+}
+
+func (server *Server) deleteAuthor(ctx *gin.Context) {
+	var req deleteAuthorRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":  "fail",
+			"message": "Author gagal dihapus. Id tidak valid",
+		})
+		return
+	}
+
+	err := server.store.DeleteAuthor(context.Background(), req.ID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"status":  "fail",
+				"message": "Author gagal dihapus. Id tidak ditemukan",
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Author berhasil dihapus",
 	})
 }
