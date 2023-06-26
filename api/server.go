@@ -62,12 +62,16 @@ func NewServer(store *db.Store) *Server {
 	v1 := basePath.Group("/v1")
 	v1.POST("/authors", server.createAuthor)
 	v1.GET("/authors/:id", server.getAuthor)
+	// todo
+	// v1.GET("/authors/:id/books", server.getAuthorBooks)
 	v1.GET("/authors", server.listAuthors)
 	v1.DELETE("/authors/:id", server.deleteAuthor)
 	v1.PUT("/authors/:id", server.updateAuthor)
 
 	v1.POST("/publishers", server.createPublisher)
 	v1.GET("/publishers/:id", server.getPublisher)
+	// todo
+	// v1.GET("/publishers/:id/books", server.getPublisherBooks)
 	v1.GET("/publishers", server.listPublishers)
 	v1.DELETE("/publishers/:id", server.deletePublisher)
 	v1.PUT("/publishers/:id", server.updatePublisher)
