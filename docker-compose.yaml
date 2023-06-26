@@ -1,38 +1,64 @@
 version: '3.5'
 
 services:
+  api:
+    build:
+      context: .
+    command: [ "/opt/server" ]
+    environment:
+    - SERVICE_NAME=go-bookshelf-api
+    - SERVICE_VERSION=0.0.1
+    - SERVICE_BASIC_AUTH_ID=test
+    - SERVICE_BASIC_AUTH_SECRET=dicoba
+    - SERVICE_PORT=8080
+    - SERVICE_ADDRESS=0.0.0.0
+    - SERVICE_BASE_PATH=api
+    - SERVICE_RATE_LIMIT_QUOTA_PER_MINUTE=12
+    - DB_DRIVER=postgres
+    - DB_HOST=localhost
+    - DB_PORT=5432
+    - DB_NAME=bookshelf
+    - DB_USER=postgres
+    - DB_PASSWORD=postgres
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+    networks:
+      - go-bookshelf-api
+    restart: always
   postgres:
     container_name: postgres_container
     image: postgres:12
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres
     volumes:
        - postgres:/data/postgres
     ports:
       - "5432:5432"
     networks:
-      - postgres
+      - go-bookshelf-api
     restart: unless-stopped
   
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4:7.2
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@mail.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_DEFAULT_EMAIL: admin@mail.org
+      PGADMIN_DEFAULT_PASSWORD: admin
       PGADMIN_CONFIG_ENABLE_PSQL: 'True'
     volumes:
        - pgadmin:/var/lib/pgadmin
     ports:
       - "${PGADMIN_PORT:-5050}:80"
     networks:
-      - postgres
+      - go-bookshelf-api
     restart: unless-stopped
 
 networks:
-  postgres:
+  go-bookshelf-api:
     driver: bridge
 
 volumes:

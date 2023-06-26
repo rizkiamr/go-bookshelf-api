@@ -7,17 +7,20 @@ import (
 	"testing"
 
 	_ "github.com/lib/pq"
-)
-
-const (
-	dbDriver = "postgres"
-	dbSource = "postgresql://postgres:postgres@127.0.0.1:5432/bookshelf?sslmode=disable"
+	"github.com/rizkiamr/go-bookshelf-api/util"
 )
 
 var testQueries *Queries
 
 func TestMain(m *testing.M) {
-	conn, err := sql.Open(dbDriver, dbSource)
+	config, err := util.LoadConfig("../../.")
+	if err != nil {
+		panic(err)
+	}
+
+	DbSource := "postgresql://" + config.DbUser + ":" + config.DbPassword + "@" + config.DbHost + ":" + config.DbPort + "/" + config.DbName + "?sslmode=disable"
+
+	conn, err := sql.Open(config.DbDriver, DbSource)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
