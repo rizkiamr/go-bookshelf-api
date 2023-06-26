@@ -4,11 +4,12 @@ RUN mkdir -p /opt/build
 
 WORKDIR /opt/build
 
-# Copy all sources in
-COPY . .
+# Copy only necessary files
+COPY go.mod go.sum ./
+RUN go mod download
 
-# Get dependencies for Go part of build
-RUN go mod tidy
+# Copy the rest of the files
+COPY . .
 
 # Do the build
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o server main.go
