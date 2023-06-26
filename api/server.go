@@ -92,11 +92,3 @@ func (server *Server) Start(address string) error {
 func errorResponse(err error) gin.H {
 	return gin.H{"error": err.Error()}
 }
-
-func deleteOkResponse(id int64) gin.H {
-	return gin.H{
-		"id":      id,
-		"status":  "ok",
-		"message": "successfully deleted",
-	}
-}

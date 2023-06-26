@@ -11,15 +11,22 @@ import (
 
 const createPublisher = `-- name: CreatePublisher :one
 INSERT INTO publishers (
+    id,
     name
 ) VALUES (
-    $1
+    $1,
+    $2
 )
 RETURNING id, name, "insertedAt"
 `
 
-func (q *Queries) CreatePublisher(ctx context.Context, name string) (Publisher, error) {
-	row := q.db.QueryRowContext(ctx, createPublisher, name)
+type CreatePublisherParams struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+func (q *Queries) CreatePublisher(ctx context.Context, arg CreatePublisherParams) (Publisher, error) {
+	row := q.db.QueryRowContext(ctx, createPublisher, arg.ID, arg.Name)
 	var i Publisher
 	err := row.Scan(&i.ID, &i.Name, &i.InsertedAt)
 	return i, err
@@ -30,7 +37,7 @@ DELETE FROM publishers
 WHERE id = $1
 `
 
-func (q *Queries) DeletePublisher(ctx context.Context, id int64) error {
+func (q *Queries) DeletePublisher(ctx context.Context, id string) error {
 	_, err := q.db.ExecContext(ctx, deletePublisher, id)
 	return err
 }
@@ -40,7 +47,7 @@ SELECT id, name, "insertedAt" FROM publishers
 WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetPublisher(ctx context.Context, id int64) (Publisher, error) {
+func (q *Queries) GetPublisher(ctx context.Context, id string) (Publisher, error) {
 	row := q.db.QueryRowContext(ctx, getPublisher, id)
 	var i Publisher
 	err := row.Scan(&i.ID, &i.Name, &i.InsertedAt)
@@ -90,7 +97,7 @@ RETURNING id, name, "insertedAt"
 `
 
 type UpdatePublisherParams struct {
-	ID   int64  `json:"id"`
+	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 

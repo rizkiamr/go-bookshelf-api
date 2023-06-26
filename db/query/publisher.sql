@@ -1,8 +1,10 @@
 -- name: CreatePublisher :one
 INSERT INTO publishers (
+    id,
     name
 ) VALUES (
-    $1
+    $1,
+    $2
 )
 RETURNING *;
 
