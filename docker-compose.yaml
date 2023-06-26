@@ -3,18 +3,16 @@ version: '3.5'
 services:
   api:
     container_name: go-bookshelf-api
-    build:
-      context: .
-    command: ["./server"]
+    image: go-bookshelf-api:latest
     environment:
       SERVICE_NAME: go-bookshelf-api
-      SERVICE_VERSION: 0.0.1
+      SERVICE_VERSION: "0.0.1"
       SERVICE_BASIC_AUTH_ID: test
       SERVICE_BASIC_AUTH_SECRET: dicoba
-      SERVICE_PORT: 8080
-      SERVICE_ADDRESS: 0.0.0.0
+      SERVICE_PORT: "8080"
+      SERVICE_ADDRESS: "0.0.0.0"
       SERVICE_BASE_PATH: api
-      SERVICE_RATE_LIMIT_QUOTA_PER_MINUTE: 12
+      SERVICE_RATE_LIMIT_QUOTA_PER_MINUTE: 12"
       DB_DRIVER: postgres
       DB_HOST: postgres
       DB_PORT: 5432
