@@ -17,7 +17,10 @@ type createPublisherRequest struct {
 func (server *Server) createPublisher(ctx *gin.Context) {
 	var req createPublisherRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":  "fail",
+			"message": "Gagal menambahkan Publisher. Mohon isi nama Publisher",
+		})
 		return
 	}
 
@@ -29,31 +32,13 @@ func (server *Server) createPublisher(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, publisher)
-}
-
-type getPublisherRequest struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
-}
-
-func (server *Server) getPublisher(ctx *gin.Context) {
-	var req getPublisherRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		return
-	}
-
-	publisher, err := server.store.GetPublisher(context.Background(), req.ID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
-			return
-		}
-
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-	}
-
-	ctx.JSON(http.StatusOK, publisher)
+	ctx.JSON(http.StatusCreated, gin.H{
+		"status":  "success",
+		"message": "Publisher berhasil ditambahkan",
+		"data": map[string]int64{
+			"publisherId": publisher.ID,
+		},
+	})
 }
 
 type listPublisherRequest struct {
@@ -79,7 +64,87 @@ func (server *Server) listPublishers(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, publishers)
+	ctx.JSON(http.StatusOK, gin.H{
+		"status": "success",
+		"data": map[string][]db.Publisher{
+			"publishers": publishers,
+		},
+	})
+}
+
+type getPublisherRequest struct {
+	ID int64 `uri:"id" binding:"required,min=1"`
+}
+
+func (server *Server) getPublisher(ctx *gin.Context) {
+	var req getPublisherRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	publisher, err := server.store.GetPublisher(context.Background(), req.ID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"status":  "fail",
+				"message": "Publisher tidak ditemukan",
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"status": "success",
+		"data": map[string]db.Publisher{
+			"publisher": publisher,
+		},
+	})
+}
+
+type updatePublisherRequest struct {
+	Name string `json:"name" binding:"required"`
+}
+
+func (server *Server) updatePublisher(ctx *gin.Context) {
+	var req updatePublisherRequest
+
+	id, _ := strconv.ParseInt(ctx.Params.ByName("id"), 0, 64)
+
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":  "fail",
+			"message": "Gagal memperbarui Publisher. Mohon isi nama publisher",
+		})
+		return
+	}
+
+	arg := db.UpdatePublisherParams{
+		ID:   id,
+		Name: req.Name,
+	}
+
+	_, err := server.store.UpdatePublisher(context.Background(), arg)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"status":  "fail",
+				"message": "Gagal memperbarui publisher. Id tidak ditemukan",
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Publisher berhasil diperbarui",
+	})
 }
 
 type deletePublisherRequest struct {
@@ -89,7 +154,10 @@ type deletePublisherRequest struct {
 func (server *Server) deletePublisher(ctx *gin.Context) {
 	var req deletePublisherRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":  "fail",
+			"message": "Publisher gagal dihapus. Id tidak valid",
+		})
 		return
 	}
 
@@ -104,38 +172,8 @@ func (server *Server) deletePublisher(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, deleteOkResponse(req.ID))
-}
-
-type updatePublisherRequest struct {
-	Name string `json:"name" binding:"required"`
-}
-
-func (server *Server) updatePublisher(ctx *gin.Context) {
-	var req updatePublisherRequest
-
-	id, _ := strconv.ParseInt(ctx.Params.ByName("id"), 0, 64)
-
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		return
-	}
-
-	arg := db.UpdatePublisherParams{
-		ID:   id,
-		Name: req.Name,
-	}
-
-	publisher, err := server.store.UpdatePublisher(context.Background(), arg)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
-			return
-		}
-
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	ctx.JSON(http.StatusAccepted, publisher)
+	ctx.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Publisher berhasil dihapus",
+	})
 }
