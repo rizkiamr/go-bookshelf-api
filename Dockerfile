@@ -11,18 +11,11 @@ COPY . .
 RUN go mod tidy
 
 # Do the build
-RUN go build -o server main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o server main.go
 
-FROM alpine:3 as alpine
-RUN apk update && apk add --no-cache ca-certificates tzdata && update-ca-certificates
-
-FROM gcr.io/distroless/base
+FROM gcr.io/distroless/static
 USER nobody:nobody
-WORKDIR /opt
-COPY --from=alpine /usr/share/zoneinfo /usr/share/zoneinfo
-COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=alpine /etc/passwd /etc/passwd
+ENTRYPOINT []
+WORKDIR /
 COPY --from=build /opt/build/server .
 ENV GIN_MODE=release
-
-ENTRYPOINT []

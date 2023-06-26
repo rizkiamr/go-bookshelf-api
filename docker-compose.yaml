@@ -1,9 +1,9 @@
 version: '3.5'
 
-services:
-  api:
-    build:
-      context: .
+services:                                                                                                                                                                   
+  api:                                                                                                                                                                      
+    build:                                                                                                                                                                  
+      context: .                                                                                                                                                            
     command: ["./server"]
     environment:
     - SERVICE_NAME=go-bookshelf-api
