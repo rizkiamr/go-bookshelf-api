@@ -16,7 +16,7 @@ RUN go build -o server main.go
 FROM alpine:3 as alpine
 RUN apk update && apk add --no-cache ca-certificates tzdata && update-ca-certificates
 
-FROM gcr.io/distroless/static
+FROM gcr.io/distroless/base
 USER nobody:nobody
 WORKDIR /opt
 COPY --from=alpine /usr/share/zoneinfo /usr/share/zoneinfo
