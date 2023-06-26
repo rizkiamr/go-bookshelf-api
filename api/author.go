@@ -17,7 +17,10 @@ type createAuthorRequest struct {
 func (server *Server) createAuthor(ctx *gin.Context) {
 	var req createAuthorRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":  "fail",
+			"message": "Gagal menambahkan Author. Mohon isi nama Author",
+		})
 		return
 	}
 
@@ -29,7 +32,13 @@ func (server *Server) createAuthor(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, author)
+	ctx.JSON(http.StatusAccepted, gin.H{
+		"status":  "success",
+		"message": "Author berhasil ditambahkan",
+		"data": map[string]int64{
+			"authorId": author.ID,
+		},
+	})
 }
 
 type getAuthorRequest struct {
