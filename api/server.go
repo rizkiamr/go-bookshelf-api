@@ -1,12 +1,13 @@
 package api
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	constants "github.com/rizkiamr/go-bookshelf-api/constant"
 	db "github.com/rizkiamr/go-bookshelf-api/db/sqlc"
 	ratelimit "github.com/rizkiamr/go-bookshelf-api/ratelimit"
+	"github.com/rizkiamr/go-bookshelf-api/util"
 )
 
 // Server serves HTTP requests for our bookshelf service.
@@ -28,10 +29,20 @@ func NewServer(store *db.Store) *Server {
 	server := &Server{store: store}
 	router := gin.Default()
 
+	config, err := util.LoadConfig("../..")
+	if err != nil {
+		panic(err)
+	}
+
 	// This makes it so each ip can only make 12 request per minute
+	rateLimitQuota, err := strconv.Atoi(config.ServiceRateLimitQuotaPerMinute)
+	if err != nil {
+		panic(err)
+	}
+
 	rateLimitStore := ratelimit.InMemoryStore(&ratelimit.InMemoryOptions{
 		Rate:  time.Minute,
-		Limit: constants.RateLimitQuota,
+		Limit: uint(rateLimitQuota),
 	})
 
 	rateLimitMiddleware := ratelimit.RateLimiter(rateLimitStore, &ratelimit.Options{
@@ -41,7 +52,7 @@ func NewServer(store *db.Store) *Server {
 
 	router.Use(rateLimitMiddleware)
 
-	basePath := router.Group("/" + constants.BasePath)
+	basePath := router.Group("/" + config.ServiceBasePath)
 	basePath.GET("/healthz", server.healthzRoutes)
 	basePath.GET("/version", server.versionRoutes)
 

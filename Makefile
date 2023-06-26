@@ -58,4 +58,7 @@ server:
 build:
 	go build -o server main.go
 
+docker-build:
+	docker build -t go-bookshelf-api:latest .
+
 .PHONY: delete-pgstack-docker start-postgres-docker start-pgadmin-docker create-db-docker drop-db-docker stop-postgres-podman delete-postgres-podman start-postgres-podman stop-pgadmin-podman delete-pgadmin-podman start-pgadmin-podman create-db-podman drop-db-podman migrate-up migrate-down sqlc clean-test-cache test server build
