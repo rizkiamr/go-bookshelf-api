@@ -1,9 +1,10 @@
 version: '3.5'
 
-services:                                                                                                                                                                   
-  api:                                                                                                                                                                      
-    build:                                                                                                                                                                  
-      context: .                                                                                                                                                            
+services:
+  api:
+    container_name: go-bookshelf-api
+    build:
+      context: .
     command: ["./server"]
     environment:
       SERVICE_NAME: go-bookshelf-api
@@ -28,7 +29,7 @@ services:
       - go-bookshelf-api
     restart: always
   postgres:
-    container_name: postgres_container
+    container_name: go-bookshelf-postgres
     image: postgres:12
     environment:
       POSTGRES_USER: postgres
@@ -43,7 +44,7 @@ services:
     restart: unless-stopped
   
   pgadmin:
-    container_name: pgadmin_container
+    container_name: go-bookshelf-pgadmin
     image: dpage/pgadmin4:7.2
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@mail.org
