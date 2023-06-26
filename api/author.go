@@ -89,7 +89,12 @@ func (server *Server) listAuthors(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, authors)
+	ctx.JSON(http.StatusOK, gin.H{
+		"status": "success",
+		"data": map[string][]db.Author{
+			"authors": authors,
+		},
+	})
 }
 
 type deleteAuthorRequest struct {
