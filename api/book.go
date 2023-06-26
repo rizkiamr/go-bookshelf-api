@@ -14,7 +14,7 @@ import (
 type createBookRequest struct {
 	Name        string `json:"name" binding:"required"`
 	Year        int32  `json:"year"`
-	AuthorID    int64  `json:"author_id"`
+	AuthorID    string `json:"author_id"`
 	Summary     string `json:"summary"`
 	PublisherID int64  `json:"publisher_id"`
 	PageCount   int32  `json:"pageCount"`
@@ -144,7 +144,7 @@ func (server *Server) getBook(ctx *gin.Context) {
 type updateBookRequest struct {
 	Name        string `json:"name" binding:"required"`
 	Year        int32  `json:"year"`
-	AuthorID    int64  `json:"author_id"`
+	AuthorID    string `json:"author_id"`
 	Summary     string `json:"summary"`
 	PublisherID int64  `json:"publisher_id"`
 	PageCount   int32  `json:"pageCount"`

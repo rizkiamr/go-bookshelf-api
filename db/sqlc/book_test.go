@@ -80,17 +80,17 @@ func TestUpdateBook(t *testing.T) {
 	publisher1 := createRandomPublisher(t)
 
 	arg := UpdateBookParams{
-		ID:   book1.ID,
-		Name: util.RandomName(),
-		Year: util.RandomInt32(1, 3000),
-		AuthorID: author1.ID,
-		Summary: util.RandomString(15),
+		ID:          book1.ID,
+		Name:        util.RandomName(),
+		Year:        util.RandomInt32(1, 3000),
+		AuthorID:    author1.ID,
+		Summary:     util.RandomString(15),
 		PublisherID: publisher1.ID,
-		PageCount: util.RandomInt32(1, 5000),
-		ReadPage: util.RandomInt32(1, 100),
-		Finished: util.RandomBool(),
-		Reading: util.RandomBool(),
-		UpdatedAt: book1.UpdatedAt,
+		PageCount:   util.RandomInt32(1, 5000),
+		ReadPage:    util.RandomInt32(1, 100),
+		Finished:    util.RandomBool(),
+		Reading:     util.RandomBool(),
+		UpdatedAt:   book1.UpdatedAt,
 	}
 
 	book2, err := testQueries.UpdateBook(context.Background(), arg)

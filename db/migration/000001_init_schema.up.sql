@@ -1,5 +1,5 @@
 CREATE TABLE "authors" (
-  "id" bigserial PRIMARY KEY,
+  "id" varchar PRIMARY KEY,
   "name" varchar NOT NULL,
   "insertedAt" timestamptz NOT NULL DEFAULT (now())
 );
@@ -14,7 +14,7 @@ CREATE TABLE "books" (
   "id" bigserial PRIMARY KEY,
   "name" varchar NOT NULL,
   "year" integer NOT NULL,
-  "author_id" bigInt NOT NULL,
+  "author_id" varchar NOT NULL,
   "summary" text NOT NULL,
   "publisher_id" bigInt NOT NULL,
   "pageCount" integer NOT NULL,

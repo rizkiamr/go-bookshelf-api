@@ -11,15 +11,22 @@ import (
 
 const createAuthor = `-- name: CreateAuthor :one
 INSERT INTO authors (
+    id,
     name
 ) VALUES (
-    $1
+    $1,
+    $2
 )
 RETURNING id, name, "insertedAt"
 `
 
-func (q *Queries) CreateAuthor(ctx context.Context, name string) (Author, error) {
-	row := q.db.QueryRowContext(ctx, createAuthor, name)
+type CreateAuthorParams struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+func (q *Queries) CreateAuthor(ctx context.Context, arg CreateAuthorParams) (Author, error) {
+	row := q.db.QueryRowContext(ctx, createAuthor, arg.ID, arg.Name)
 	var i Author
 	err := row.Scan(&i.ID, &i.Name, &i.InsertedAt)
 	return i, err
@@ -30,7 +37,7 @@ DELETE FROM authors
 WHERE id = $1
 `
 
-func (q *Queries) DeleteAuthor(ctx context.Context, id int64) error {
+func (q *Queries) DeleteAuthor(ctx context.Context, id string) error {
 	_, err := q.db.ExecContext(ctx, deleteAuthor, id)
 	return err
 }
@@ -40,7 +47,7 @@ SELECT id, name, "insertedAt" FROM authors
 WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetAuthor(ctx context.Context, id int64) (Author, error) {
+func (q *Queries) GetAuthor(ctx context.Context, id string) (Author, error) {
 	row := q.db.QueryRowContext(ctx, getAuthor, id)
 	var i Author
 	err := row.Scan(&i.ID, &i.Name, &i.InsertedAt)
@@ -90,7 +97,7 @@ RETURNING id, name, "insertedAt"
 `
 
 type UpdateAuthorParams struct {
-	ID   int64  `json:"id"`
+	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 

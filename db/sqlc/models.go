@@ -10,7 +10,7 @@ import (
 )
 
 type Author struct {
-	ID         int64     `json:"id"`
+	ID         string    `json:"id"`
 	Name       string    `json:"name"`
 	InsertedAt time.Time `json:"insertedAt"`
 }
@@ -19,7 +19,7 @@ type Book struct {
 	ID          int64        `json:"id"`
 	Name        string       `json:"name"`
 	Year        int32        `json:"year"`
-	AuthorID    int64        `json:"author_id"`
+	AuthorID    string       `json:"author_id"`
 	Summary     string       `json:"summary"`
 	PublisherID int64        `json:"publisher_id"`
 	PageCount   int32        `json:"pageCount"`

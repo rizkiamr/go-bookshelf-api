@@ -4,9 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"net/http"
-	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	db "github.com/rizkiamr/go-bookshelf-api/db/sqlc"
 )
 
@@ -24,9 +25,15 @@ func (server *Server) createAuthor(ctx *gin.Context) {
 		return
 	}
 
-	name := req.Name
+	uuidObj := uuid.New()
+	uuidStr := uuidObj.String()
+	uuidWithoutDashes := strings.ReplaceAll(uuidStr, "-", "")
 
-	author, err := server.store.CreateAuthor(context.Background(), name)
+	arg := db.CreateAuthorParams{
+		ID:   uuidWithoutDashes,
+		Name: req.Name,
+	}
+	author, err := server.store.CreateAuthor(context.Background(), arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -35,7 +42,7 @@ func (server *Server) createAuthor(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{
 		"status":  "success",
 		"message": "Author berhasil ditambahkan",
-		"data": map[string]int64{
+		"data": map[string]string{
 			"authorId": author.ID,
 		},
 	})
@@ -73,7 +80,7 @@ func (server *Server) listAuthors(ctx *gin.Context) {
 }
 
 type getAuthorRequest struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
+	ID string `uri:"id" binding:"required,min=1"`
 }
 
 func (server *Server) getAuthor(ctx *gin.Context) {
@@ -112,7 +119,7 @@ type updateAuthorRequest struct {
 func (server *Server) updateAuthor(ctx *gin.Context) {
 	var req updateAuthorRequest
 
-	id, _ := strconv.ParseInt(ctx.Params.ByName("id"), 0, 64)
+	id := ctx.Params.ByName("id")
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -148,7 +155,7 @@ func (server *Server) updateAuthor(ctx *gin.Context) {
 }
 
 type deleteAuthorRequest struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
+	ID string `uri:"id" binding:"required,min=1"`
 }
 
 func (server *Server) deleteAuthor(ctx *gin.Context) {
