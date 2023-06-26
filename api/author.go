@@ -55,7 +55,10 @@ func (server *Server) getAuthor(ctx *gin.Context) {
 	author, err := server.store.GetAuthor(context.Background(), req.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"status":  "fail",
+				"message": "Author tidak ditemukan",
+			})
 			return
 		}
 
@@ -63,7 +66,12 @@ func (server *Server) getAuthor(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, author)
+	ctx.JSON(http.StatusOK, gin.H{
+		"status": "success",
+		"data": map[string]db.Author{
+			"author": author,
+		},
+	})
 }
 
 type listAuthorRequest struct {
