@@ -5,6 +5,7 @@ services:
     container_name: go-bookshelf-api
     build:
       context: .
+      dockerfile: Dockerfile
     command: ["./server"]
     environment:
     - SERVICE_NAME=go-bookshelf-api
