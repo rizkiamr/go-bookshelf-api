@@ -68,7 +68,7 @@ func (server *Server) createBook(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusAccepted, gin.H{
+	ctx.JSON(http.StatusCreated, gin.H{
 		"status":  "success",
 		"message": "Buku berhasil ditambahkan",
 		"data": map[string]int64{
