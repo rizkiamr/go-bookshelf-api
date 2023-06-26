@@ -75,8 +75,17 @@ func NewServer(store *db.Store) *Server {
 	v1.POST("/books", server.createBook)
 	v1.GET("/books", server.listBooks)
 	v1.GET("/books/:id", server.getBook)
+	// todo
+	// v1.GET("/books/:id/author", server.getBookAuthor)
+	// v1.GET("/books/:id/publisher", server.getBookPublisher)
 	v1.PUT("/books/:id", server.updateBook)
+	// todo
+	// v1.PUT("/books/:id/author", server.updateBookAuthor)
+	// v1.PUT("/books/:id/publisher", server.updateBookPublisher)
 	v1.DELETE("/books/:id", server.deleteBook)
+	// todo
+	// v1.DELETE("/books/:id/author", server.deleteBookAuthor)
+	// v1.DELETE("/books/:id/publisher", server.deleteBookPublisher)
 
 	addWebhookRoutes(v1)
 

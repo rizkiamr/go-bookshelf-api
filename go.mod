@@ -9,6 +9,7 @@ require (
 	github.com/redis/go-redis/v9 v9.0.2
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.8.4
+	github.com/google/uuid v1.3.0
 )
 
 require (
