@@ -21,7 +21,7 @@ USER nobody:nobody
 COPY --from=alpine /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=alpine /etc/passwd /etc/passwd
-COPY --from=build /opt/build/server /opt/server
+COPY --from=build /opt/build/server /server
 ENV GIN_MODE=release
 
-CMD [ "/opt/server" ]
+CMD [ "/server" ]
