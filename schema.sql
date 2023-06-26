@@ -1,5 +1,5 @@
 CREATE TABLE "authors" (
-  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  "id" varchar PRIMARY KEY,
   "name" varchar NOT NULL,
   "insertedAt" timestamptz NOT NULL DEFAULT (now())
 );

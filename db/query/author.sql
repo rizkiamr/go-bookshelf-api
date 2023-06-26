@@ -1,8 +1,10 @@
 -- name: CreateAuthor :one
 INSERT INTO authors (
+    id,
     name
 ) VALUES (
-    $1
+    $1,
+    $2
 )
 RETURNING *;
 
