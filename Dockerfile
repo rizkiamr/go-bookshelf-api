@@ -1,8 +1,5 @@
 FROM golang:1.20 AS build
 
-# Install git
-RUN apk update && apk upgrade && apk add --no-cache git
-
 RUN mkdir -p /opt/build
 
 WORKDIR /opt/build
